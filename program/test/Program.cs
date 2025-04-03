@@ -1,4 +1,5 @@
 ﻿using System;
+using lib;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -58,8 +59,6 @@ namespace test
 
                 if (message.Text == "/start")
                 {
-
-
                     await bot.SendMessage(message.Chat.Id, "Доброго дня! Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
                 }
             }

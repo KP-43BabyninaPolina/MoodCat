@@ -1,4 +1,4 @@
-namespace test;
+namespace lib;
 public static class BotMethod
 {
 public static void SwitchHistory()
