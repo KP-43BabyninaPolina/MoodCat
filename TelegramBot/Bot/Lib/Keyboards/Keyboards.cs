@@ -10,11 +10,4 @@ public static class Keyboard
         new[] { InlineKeyboardButton.WithCallbackData("Налаштування", "B") },
         new[] { InlineKeyboardButton.WithCallbackData("Статистика настрою", "A") }
     });
-
-    public static InlineKeyboardMarkup ContentKeyboard = new InlineKeyboardMarkup(new[]
-                {
-                    new[] { InlineKeyboardButton.WithCallbackData("Фільми", "MC") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
-                });
 }

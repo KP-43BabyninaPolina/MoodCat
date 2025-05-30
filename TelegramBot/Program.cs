@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TelegramBot.Services;
 using TelegramBot.Bot.Services;
+using TelegramBot.Bot.Lib.Methods;
 
 namespace TelegramBot
 {
@@ -19,19 +20,20 @@ namespace TelegramBot
         private static string Token { get; set; } = "7685257153:AAE77imIaHX-T5EyBlCKd8G_H71QI9hAKLA";
         private static TelegramBotClient? botClient;
         private static CommandRouter? commandRouter;
-        private static string currUserMood = "";
+        private static Dictionary<long, string> userMoods = new();
+        private static Dictionary<long, int> userLastMessageIds = new();
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
 
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
-
             botClient = new TelegramBotClient(Token);
             commandRouter = new CommandRouter();
+
+            var contextFactory = new AppDbContextFactory();
+            var context = contextFactory.CreateDbContext(Array.Empty<string>());
+            await context.Database.EnsureCreatedAsync();
 
             using var cts = new CancellationTokenSource();
 
@@ -44,26 +46,53 @@ namespace TelegramBot
                 DropPendingUpdates = true
             };
 
-            var genContext = new AppDbContextFactory();
-            // Ensure the database is created   
-            var context = genContext.CreateDbContext(args);
-            await context.Database.EnsureCreatedAsync();
+            botClient.StartReceiving(
+                async (bot, update, cancellationToken) => await UpdateHandler(bot, update, context, cancellationToken), // ← передаємо context
+                ErrorHandler,
+                receiverOptions,
+                cts.Token
+            );
 
-            botClient.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, cts.Token);
             Console.ReadLine();
             cts.Cancel();
+        }
 
-             async Task UpdateHandler(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
+        private static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            Console.WriteLine($"Помилка: {exception.Message}");
+            return Task.CompletedTask;
+        }
+
+        // ← тепер context передається сюди!
+        private static async Task UpdateHandler(
+            ITelegramBotClient bot,
+            Update update,
+            AppDbContext context,
+            CancellationToken cancellationToken)
         {
             if (update.Message is { Text: not null } message)
             {
                 if (message.Text == "/start")
                 {
-                    var user = message.From;
-
-                    UserService service = new(context);
-                    await service.RegisterUserAsync(user!.Id, user!.FirstName);
-                    await bot.SendMessage(message.Chat.Id, "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
+                    await BotUtils.SendMessageReplacingOldAsync(
+                        bot,
+                        message.Chat.Id,
+                        "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:",
+                        Keyboard.MainMenu,
+                        userLastMessageIds,
+                        cancellationToken
+                    );
+                }
+                else
+                {
+                    await BotUtils.SendMessageReplacingOldAsync(
+                        bot,
+                        message.Chat.Id,
+                        "Мур! Для початку роботи надішли /start",
+                        null,
+                        userLastMessageIds,
+                        cancellationToken
+                    );
                 }
             }
             else if (update.CallbackQuery is { Message: not null } callbackQuery)
@@ -72,29 +101,26 @@ namespace TelegramBot
 
                 if (handler != null)
                 {
-                    await handler.HandleAsync(bot, callbackQuery, currUserMood, context, cancellationToken);
+                    await handler.HandleAsync(
+                        bot,
+                        callbackQuery,
+                        userMoods,
+                        userLastMessageIds,
+                        context,
+                        cancellationToken);
                 }
                 else
                 {
-                    await bot.SendTextMessageAsync(
-                        chatId: callbackQuery.Message.Chat.Id,
-                        text: "Ой-ой! Я не знаю, як це обробити.",
-                        cancellationToken: cancellationToken
+                    await BotUtils.SendMessageReplacingOldAsync(
+                        bot,
+                        callbackQuery.Message.Chat.Id,
+                        "Ой-ой! Я не знаю, як це обробити.",
+                        null,
+                        userLastMessageIds,
+                        cancellationToken
                     );
                 }
             }
         }
-
-        static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-        {
-            Console.WriteLine($"Помилка: {exception.Message}");
-            return Task.CompletedTask;
-        }
-
-        }
-        
     }
 }
-    
-
-

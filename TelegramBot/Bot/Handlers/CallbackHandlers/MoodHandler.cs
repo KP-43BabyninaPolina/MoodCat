@@ -2,6 +2,7 @@ using System;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Bot.Handlers.CallbackHandlers.TelegramBot.Bot.Handlers.ICallbackHandlers;
 using TelegramBot.Bot.Services;
 using TelegramBot.Data;
 using TelegramBot.Services;
@@ -12,13 +13,16 @@ namespace TelegramBot.Bot.Handlers.CallbackHandlers;
 public class MoodHandler : ICallbackHandler
 {
     private static readonly HashSet<string> MoodCodes = new() { "HO", "SO", "AO", "TO", "CO", "C" };
+
     public bool CanHandle(string data) => MoodCodes.Contains(data);
 
+
     public async Task HandleAsync(
-        ITelegramBotClient bot,
+    ITelegramBotClient bot,
         CallbackQuery callbackQuery,
-        string currUserMood,
-        AppDbContext context,
+        Dictionary<long, string> userMoods,
+        Dictionary<long, int> userLastMessageIds,
+        AppDbContext context, // ← ОБОВ’ЯЗКОВО
         CancellationToken cancellationToken)
     {
         var chatId = callbackQuery.Message.Chat.Id;
@@ -36,7 +40,7 @@ public class MoodHandler : ICallbackHandler
                     new[] { InlineKeyboardButton.WithCallbackData("Спокійний", "CO") }
                 });
 
-                await bot.SendTextMessageAsync(
+                await bot.SendMessage(
                     chatId,
                     "Обери свій кото-настрій на сьогодні! 🐾",
                     replyMarkup: moodKeyboard,
@@ -49,9 +53,7 @@ public class MoodHandler : ICallbackHandler
             case "AO":
             case "TO":
             case "CO":
-                currUserMood = data;
-                MoodService service = new(context);
-                service.UpdateMoodCounterAsync(callbackQuery.From.Id, currUserMood);
+                userMoods[chatId] = data;
 
                 var contentKeyboard = new InlineKeyboardMarkup(new[]
                 {
@@ -60,7 +62,7 @@ public class MoodHandler : ICallbackHandler
                     new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
                 });
 
-                await bot.SendTextMessageAsync(
+                await bot.SendMessage(
                     chatId,
                     "Ваш настрій зафіксовано! Що бажаєте переглянути?",
                     replyMarkup: contentKeyboard,
@@ -70,5 +72,3 @@ public class MoodHandler : ICallbackHandler
         }
     }
 }
-
-
