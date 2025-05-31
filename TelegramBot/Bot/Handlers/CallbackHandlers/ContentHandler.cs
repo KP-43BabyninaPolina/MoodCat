@@ -54,8 +54,8 @@ public class ContentHandler : ICallbackHandler
             };
         }
 
+
         string contentType = CurrentContentManager.GetType(userId);
-        
         if (!string.IsNullOrEmpty(contentType))
         {
             currUserMood = CurrentMoodManager.GetMood(userId);

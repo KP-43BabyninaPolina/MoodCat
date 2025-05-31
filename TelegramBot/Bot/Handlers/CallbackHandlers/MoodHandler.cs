@@ -62,13 +62,6 @@ public class MoodHandler : ICallbackHandler
                     MoodService service = new(context);
                     await service.UpdateMoodCounterAsync(userId, currUserMood);
                 }
-                
-                var contentKeyboard = new InlineKeyboardMarkup(new[]
-                {
-                    new[] { InlineKeyboardButton.WithCallbackData("Фільми", "MC") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
-                });
 
                 await bot.SendMessage(
                     chatId,

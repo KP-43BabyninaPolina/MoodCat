@@ -60,7 +60,7 @@ public static class BotMethod
             new[]
             {
                 InlineKeyboardButton.WithCallbackData("\U0001F504 настрій", "C"),
-                InlineKeyboardButton.WithCallbackData("\U0001F504тип контенту", "HO")
+                InlineKeyboardButton.WithCallbackData("\U0001F504тип контенту", "R")
             },
             new[] { InlineKeyboardButton.WithCallbackData("До головного меню", "F") },
            new[] { InlineKeyboardButton.WithCallbackData("Очистити чат", "G") } // <-- нова кнопка
