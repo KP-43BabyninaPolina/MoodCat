@@ -55,10 +55,10 @@ public class MoodHandler : ICallbackHandler
             case "CO":
                 currUserMood = data;
                 var userId = callbackQuery.From.Id;
+                CurrentMoodManager.SetMood(userId, data);
 
                 if (StatisticsSwitch.IsOn())
                 {
-                    CurrentMoodManager.SetMood(userId, data);
                     MoodService service = new(context);
                     await service.UpdateMoodCounterAsync(userId, currUserMood);
                 }
