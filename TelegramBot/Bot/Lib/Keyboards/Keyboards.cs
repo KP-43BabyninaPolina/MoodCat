@@ -11,15 +11,24 @@ public static class Keyboard
         new[] { InlineKeyboardButton.WithCallbackData("Статистика настрою", "A") }
     });
 
-    public static InlineKeyboardMarkup ContentKeyboard = new InlineKeyboardMarkup(new[]
+    public static InlineKeyboardMarkup Content = new InlineKeyboardMarkup(new[]
                 {
                     new[] { InlineKeyboardButton.WithCallbackData("Фільми", "MC") },
                     new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
                     new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
                 });
 
-                 public static InlineKeyboardMarkup Settings = new InlineKeyboardMarkup(new[]
+    public static InlineKeyboardMarkup Mood = new InlineKeyboardMarkup(new[]
                 {
+                    new[] { InlineKeyboardButton.WithCallbackData("Веселий", "HO") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Сумний", "SO") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Злий", "AO") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Виснажений", "TO") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Спокійний", "CO") }
+                });
+
+    public static InlineKeyboardMarkup Settings = new InlineKeyboardMarkup(new[]
+  {
                     new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Очищення чату", "СS") },
                     new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Статистику", "SS") },
                 });

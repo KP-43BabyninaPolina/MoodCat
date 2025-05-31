@@ -3,6 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Bot.Handlers.CallbackHandlers.TelegramBot.Bot.Handlers.ICallbackHandlers;
+using TelegramBot.Bot.Lib.Keyboards;
 using TelegramBot.Bot.Services;
 using TelegramBot.Data;
 using TelegramBot.Services;
@@ -31,19 +32,12 @@ public class MoodHandler : ICallbackHandler
         switch (data)
         {
             case "C":
-                var moodKeyboard = new InlineKeyboardMarkup(new[]
-                {
-                    new[] { InlineKeyboardButton.WithCallbackData("Веселий", "HO") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Сумний", "SO") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Злий", "AO") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Виснажений", "TO") },
-                    new[] { InlineKeyboardButton.WithCallbackData("Спокійний", "CO") }
-                });
+    
 
                 await bot.SendMessage(
                     chatId,
                     "Обери свій кото-настрій на сьогодні! 🐾",
-                    replyMarkup: moodKeyboard,
+                    replyMarkup: Keyboard.Mood,
                     cancellationToken: cancellationToken
                 );
                 break;
@@ -55,6 +49,12 @@ public class MoodHandler : ICallbackHandler
             case "CO":
                 currUserMood = data;
                 var userId = callbackQuery.From.Id;
+
+                if (CurrentMoodManager.GetMood(userId) != null)
+                {
+                    CurrentMoodManager.ClearMood(userId);
+                }
+                
                 CurrentMoodManager.SetMood(userId, data);
 
                 if (StatisticsSwitch.IsOn())
@@ -73,7 +73,7 @@ public class MoodHandler : ICallbackHandler
                 await bot.SendMessage(
                     chatId,
                     "Ваш настрій зафіксовано! Що бажаєте переглянути?",
-                    replyMarkup: contentKeyboard,
+                    replyMarkup: Keyboard.Content,
                     cancellationToken: cancellationToken
                 );
 
