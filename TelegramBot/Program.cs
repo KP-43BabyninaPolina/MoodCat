@@ -62,7 +62,11 @@ namespace TelegramBot
                     var user = message.From;
 
                     UserService service = new(context);
-                    await service.RegisterUserAsync(user!.Id, user!.FirstName);
+                     if (StatisticsSwitch.IsOn())
+                     {
+                      await service.RegisterUserAsync(user!.Id, user!.FirstName);
+                    } 
+                    
                     await bot.SendMessage(message.Chat.Id, "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                 }
             }

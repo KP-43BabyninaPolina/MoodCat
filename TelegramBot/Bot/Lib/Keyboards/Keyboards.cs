@@ -17,4 +17,10 @@ public static class Keyboard
                     new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
                     new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
                 });
+
+                 public static InlineKeyboardMarkup Settings = new InlineKeyboardMarkup(new[]
+                {
+                    new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Очищення чату", "СS") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Статистику", "SS") },
+                });
 }

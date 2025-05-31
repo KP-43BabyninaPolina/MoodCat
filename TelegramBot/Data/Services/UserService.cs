@@ -1,23 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using TelegramBot.Data;
 
-
 namespace TelegramBot.Services;
+
 using Data.Models;
 
 public class UserService
 {
-    public AppDbContext Db { get; set; }
+    private readonly AppDbContext _db;
+    
 
-    public UserService(AppDbContext db) => Db = db;
+    public UserService(AppDbContext db) => _db = db;
 
     public async Task RegisterUserAsync(long tgId, string? username)
     {
-        var user = await Db.Users.FirstOrDefaultAsync(u => u.TelegramId == tgId);
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.TelegramId == tgId);
         if (user is null)
         {
-            Db.Users.Add(new Person(){ TelegramId = tgId, Username = username ?? "unknown" });
-            await Db.SaveChangesAsync();
+            _db.Users.Add(new Person(){ TelegramId = tgId, Username = username ?? "unknown" });
+            await _db.SaveChangesAsync();
         }
     }
 }

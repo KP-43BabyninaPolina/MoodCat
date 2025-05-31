@@ -21,10 +21,5 @@
     <Folder Include="Bot\Lib\" />
     <Folder Include="Bot\Lib\Keyboards\" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <None Include="Data\Models\User.cs" />
-  </ItemGroup>
   
 </Project>

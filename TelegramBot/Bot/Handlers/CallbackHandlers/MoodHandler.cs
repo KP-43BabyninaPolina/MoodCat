@@ -52,10 +52,13 @@ public class MoodHandler : ICallbackHandler
                 currUserMood = data;
                 var userId = callbackQuery.From.Id;
 
-                CurrentMoodManager.SetMood(userId, data);
-                MoodService service = new(context);
-                service.UpdateMoodCounterAsync(callbackQuery.From.Id, currUserMood);
-
+                if (StatisticsSwitch.IsOn())
+                {
+                    CurrentMoodManager.SetMood(userId, data);
+                    MoodService service = new(context);
+                    await service.UpdateMoodCounterAsync(userId, currUserMood);
+                }
+                
                 var contentKeyboard = new InlineKeyboardMarkup(new[]
                 {
                     new[] { InlineKeyboardButton.WithCallbackData("Фільми", "MC") },

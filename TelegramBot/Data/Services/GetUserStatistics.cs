@@ -6,6 +6,7 @@ namespace TelegramBot.Services;
 
    public class MoodAnalysisResult
 {
+    public string UserName { get; set; } = "";
     public string MostFrequentMood { get; set; } = "";
     public Dictionary<string, int> MoodCounters { get; set; } = new();
     public Dictionary<string, double> MoodRatios { get; set; } = new();
@@ -25,10 +26,10 @@ public class StatisticsService
         // Збираємо дані
         var counters = new Dictionary<string, int>
         {
-            ["Щасливий"] = user.HappyCounter,
+            ["Веселий"] = user.HappyCounter,
             ["Сумний"] = user.SadCounter,
             ["Злий"] = user.AngryCounter,
-            ["Втомлений"] = user.TiredCounter,
+            ["Виснажений"] = user.TiredCounter,
             ["Спокійний"] = user.CalmCounter
         };
 
@@ -46,6 +47,7 @@ public class StatisticsService
 
         return new MoodAnalysisResult
         {
+            UserName = user.Username,
             MostFrequentMood = mostFrequent,
             MoodCounters = counters,
             MoodRatios = ratios

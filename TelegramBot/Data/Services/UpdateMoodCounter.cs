@@ -5,15 +5,19 @@ namespace TelegramBot.Services;
 
 public class MoodService
 {
-    public AppDbContext Db { get; set; }
+        private readonly AppDbContext _db;
 
-    public MoodService(AppDbContext db) => Db = db;
+
+    public MoodService(AppDbContext db) => _db = db;
 
     public async Task UpdateMoodCounterAsync(long tgId, string currUserMood)
     {
-        var user = await Db.Users.FirstOrDefaultAsync(u => u.TelegramId == tgId);
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.TelegramId == tgId);
 
-        if (user is not null)
+        Console.WriteLine($"Happy: {user.HappyCounter}, Sad: {user.SadCounter}");
+
+
+        if (user is not null && currUserMood != null)
         {
             switch (currUserMood)
             {
@@ -38,9 +42,16 @@ public class MoodService
                     break;
 
             }
+             _db.SaveChanges();
+
+        var test = await _db.Users.FirstOrDefaultAsync(u => u.TelegramId == tgId);
+Console.WriteLine($"Після збереження: Happy = {test.HappyCounter}");
 
         }
-        await Db.SaveChangesAsync();
-        System.Console.WriteLine("Зміни збережено в бд.");
+        else
+        {
+            System.Console.WriteLine("Зміни не збережено.");
+        }
+        
     }
 }

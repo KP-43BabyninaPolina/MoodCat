@@ -2,6 +2,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Data;
 using TelegramBot.Services;
+using TelegramBot.Bot.Services;
 
 namespace TelegramBot.Bot.Lib.Methods;
 
@@ -14,7 +15,7 @@ public static class BotMethod
 
     public static void SwitchStatistics()
     {
-        throw new NotImplementedException();
+        StatisticsSwitch.Switch();
     }
 
     public static async Task ViewStatistics(long tgId, AppDbContext context, ITelegramBotClient bot, long chatId, CancellationToken cancellationToken)
@@ -25,7 +26,7 @@ public static class BotMethod
         string message;
         if (analysis is not null)
         {
-            message = $"Найчастіший настрій: {analysis.MostFrequentMood}\n";
+            message = $"Найчастіший настрій користувача {analysis.UserName}: {analysis.MostFrequentMood}\n";
             foreach (var mood in analysis.MoodCounters)
             {
                 message = message + $"\n{mood.Key}: {mood.Value} ({analysis.MoodRatios[mood.Key]}%)";
