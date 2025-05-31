@@ -18,6 +18,7 @@ namespace TelegramBot.Bot.Services
             new MoodStatistHandler(),
              new ClearChatHandler(),
             new OnOffStatisticsHandler(),
+            new OnOffHistoryHandler(),
          };
          }
 
