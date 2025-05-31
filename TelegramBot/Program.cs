@@ -4,8 +4,11 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Bot.Lib.Keyboards;
+using TelegramBot.Services;
 using TelegramBot.Data;
+using TelegramBot.Bot.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +40,18 @@ namespace TelegramBot
             var contextFactory = new AppDbContextFactory();
             var context = contextFactory.CreateDbContext(Array.Empty<string>());
             await context.Database.EnsureCreatedAsync();
+
+            var app = builder.Build();
+
+            app.MapGet("/", () => "MoodCat працює через polling!");
+
+            string? token = Environment.GetEnvironmentVariable("TOKEN");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("[ERROR] Не вдалося отримати токен із змінної середовища 'TOKEN'.");
+                return;
+            }
 
             using var cts = new CancellationTokenSource();
 
@@ -80,19 +95,17 @@ namespace TelegramBot
                     var user = message.From;
 
                     UserService service = new(context);
-                      if (StatisticsSwitch.IsOn())
-                    {
-                      await service.RegisterUserAsync(user!.Id, user!.FirstName);
-                    } 
-                    
-                     await BotUtils.SendMessageReplacingOldAsync(
-                       bot,
-                       message.Chat.Id,
-                       "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:",
-                       Keyboard.MainMenu,
-                       userLastMessageIds,
-                       cancellationToken
-                   );
+
+                    await service.RegisterUserAsync(user!.Id, user!.FirstName);
+
+                    await BotUtils.SendMessageReplacingOldAsync(
+                      bot,
+                      message.Chat.Id,
+                      "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:",
+                      Keyboard.MainMenu,
+                      userLastMessageIds,
+                      cancellationToken
+                  );
                 }
                 else
                 {
@@ -134,4 +147,6 @@ namespace TelegramBot
             }
         }
     }
+    
 }
+

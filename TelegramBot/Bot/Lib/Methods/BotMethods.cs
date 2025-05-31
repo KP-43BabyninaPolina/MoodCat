@@ -2,6 +2,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Data;
 using TelegramBot.Services;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types;
 using TelegramBot.Bot.Services;
 
 namespace TelegramBot.Bot.Lib.Methods;
@@ -76,14 +78,13 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-
         string response = contentType switch
         {
             "movies" => currUserMood switch
             {
                 "HO" => "Мур-мур! Ось фільми, які подарують тобі багато радості та тепла, наче пухнастик, що весело ганяється за мотузочкою!",
                 "SO" => "Іноді хочеться посумувати, загорнувшись у ковдру, як котик у клубочок. Ось фільми, що допоможуть пережити ці моменти.",
-                "AO" => "Перемкни свою злість у пригоди! Ось список фільмів, де герої, як кіт, що вирішив підкорити вершину шафи, як би тяжко не було, ніколи не здається!!",
+                "AO" => "Перемкни свою злість у пригоди! Ось список фільмів, де герої, як кіт, що вирішив підкорити вершину шафи, як би тяжко не було, ніколи не здається!",
                 "TO" => "Втома буває у всіх, навіть у хвостатих мандрівників. Ось фільми, що допоможуть відпочити та зарядитися затишком.",
                 "CO" => "Ці фільми огорнуть тебе спокоєм, як тепле муркотіння поруч. Вдихни, видихни – і просто насолоджуйся.",
                 _ => "Йой.."
@@ -110,15 +111,123 @@ public static class BotMethod
         };
 
         await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
-    }
 
-    internal static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, Dictionary<long, string> userMoods, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+        var animeRecommendations = new Dictionary<string, List<string>>
+        {
+            ["HO"] = new() {
+            "Несолодке життя псионіка Сайкі Кусуо — https://nekoteka.com/anime/nesolodke-zhyttya-psyonika-sayki-kusuo",
+            "Шпигун та сім'я — https://nekoteka.com/anime/shpyhun-ta-simya",
+            "Скейт: Нескінченність — https://nekoteka.com/anime/skeyt-neskinchennist"
+        },
+            ["SO"] = new() {
+            "Атака Титанів: Фінальний сезон — https://nekoteka.com/anime/ataka-tytaniv-finalnyy-sezon-2-chastyna",
+            "Євангеліон 3.0+1.0 — https://nekoteka.com/anime/yevanhelion-3010-odnoho-razu",
+            "Рибка-бананка — https://nekoteka.com/anime/rybka-bananka"
+        },
+            ["AO"] = new() {
+            "Сталевий алхімік: Братерство — https://nekoteka.com/anime/stalevyy-alkhimik-braterstvo",
+            "Мисливець х Мисливець — https://nekoteka.com/anime/myslyvets-kh-myslyvets-2011",
+            "Клинок, який знищує демонів — https://nekoteka.com/anime/klynok-yakyy-znyshchuye-demoniv-kvartal-rozvah"
+        },
+            ["TO"] = new() {
+            "Форма голосу — https://nekoteka.com/anime/forma-holosu",
+            "Вайолет Еверґарден — https://nekoteka.com/anime/vayolet-evergarden",
+            "Жозе, тигр і риба — https://nekoteka.com/anime/zhoze-tyhr-i-ryba"
+        },
+            ["CO"] = new() {
+            "K-ON!: The Movie — https://nekoteka.com/anime/k-movie",
+            "Ґівен — https://nekoteka.com/anime/given",
+            "Doukyuusei -Classmates- — https://nekoteka.com/anime/doukyuusei-classmates"
+        }
+        };
 
-    internal static void ViewStatistics(long tgId, object context, ITelegramBotClient bot, long chatId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
+        var filmRecommendations = new Dictionary<string, List<string>>
+        {
+            ["HO"] = new() {
+            "Пес із нами / Суперпес — https://uakino.me/filmy/genre-action/19541-pes-z-nami-superpes.html",
+            "К-9: Приватні детективи — https://uakino.me/filmy/genre-action/6574-sobacha-robota-3.html",
+            "Minecraft: Фільм — https://uakino.me/filmy/genre-action/27135-minecraft-film.html"
+        },
+            ["SO"] = new() {
+            "Світ здригнеться — https://uakino.me/filmy/genre_drama/27796-svit-zdrygnetsia.html",
+            "Королі літа — https://uakino.me/filmy/genre_comedy/27666-koroli-lita.html",
+            "Зла не існує — https://uakino.me/filmy/genre_drama/24922-zla-ne-isnuie.html"
+        },
+            ["AO"] = new() {
+            "Я воїн — https://uakino.me/filmy/genre-action/27799-ia-voin.html",
+            "Ідеальний хижак — https://uakino.me/filmy/genre-action/27291-idealnyi-khyzhak.html",
+            "Палка пристрасть — https://uakino.me/filmy/genre-action/27075-palka-prystrast-zhyvy-na-povnu.html"
+        },
+            ["TO"] = new() {
+            "Все про мого собаку — https://uakino.me/filmy/genre_drama/27591-vse-pro-mogo-sobaku.html",
+            "Звільніть Віллі — https://uakino.me/filmy/genre_adventure/3483-zvlnt-vll.html",
+            "Хачіко / Історія Хачіко — https://uakino.me/filmy/genre_drama/26552-khachiko-istoriia-khachiko.html"
+        },
+            ["CO"] = new() {
+            "Незакінчене життя — https://uakino.me/filmy/genre_drama/27769-nezakinchene-zhyttia.html",
+            "Операція Літаючий Слон — https://uakino.me/filmy/genre-action/8107-operacya-ltayuchiy-slon.html",
+            "Друга книга Джунглів — https://uakino.me/filmy/genre_comedy/23932-druga-knyga-dzhungliv-maugli-i-balu.html"
+        }
+        };
+
+        var photoRecommendations = new Dictionary<string, List<string>>
+        {
+            ["HO"] = new() {
+            "https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg",
+        "https://cdn.pixabay.com/photo/2020/01/19/16/44/cat-4778387_1280.jpg",
+        "https://media.istockphoto.com/id/1389862392/photo/womans-hand-stroking-a-ginger-cat-on-isolated-white-background.jpg?s=612x612&w=0&k=20&c=DW07OmTZBTG0u2A8McZfmXkIW_7VXCAwDpVIRhUfqQw="
+        },
+            ["SO"] = new() {
+            "https://cdn.pixabay.com/photo/2022/01/16/14/20/cat-6942183_1280.jpg",
+        "https://cdn.pixabay.com/photo/2023/08/18/15/02/cat-8198720_1280.jpg",
+        "https://media.istockphoto.com/id/2040984869/photo/big-eyed-naughty-cat-looking-at-the-target-from-behind-the-marble-table.jpg?s=612x612&w=0&k=20&c=uh2Nr_JLchR1ZGvdHXq1n7shhXuHPruOKLQD5wlRH9U="
+        },
+            ["AO"] = new() {
+             "https://cdn.pixabay.com/photo/2022/05/21/02/40/cat-7210553_1280.jpg",
+        "https://media.istockphoto.com/id/1434414228/photo/stern-sad-cat-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=wis7NGP0_4_Vwti3xioilh3NfYrwHO-JoRMvFVzr6Ck=",
+        "https://media.istockphoto.com/id/1350191166/photo/fluffy-silver-colored-cat-looking-grumpy-and-displeased-on-brown-background.jpg?s=612x612&w=0&k=20&c=RaFMKMnzxn68KWVSo13XwPeauc7mJUAT4RJ6_KqEX-0="
+        },
+            ["TO"] = new() {
+            "https://cdn.pixabay.com/photo/2020/02/20/12/12/cat-4864605_1280.jpg",
+        "https://media.istockphoto.com/id/483799085/photo/lazy-fat-cat-sleeping-on-the-couch.jpg?s=612x612&w=0&k=20&c=FVbhNThXzzYRtJi2r5FPp6rJBYSDZdtSF7VXwMorH0o="
+        },
+            ["CO"] = new() {
+             "https://cdn.pixabay.com/photo/2020/02/02/14/03/cat-4813099_1280.jpg",
+        "https://cdn.pixabay.com/photo/2024/05/18/08/16/tomcat-8769861_1280.jpg",
+        "https://cdn.pixabay.com/photo/2020/04/04/09/55/cat-5001570_1280.jpg"
+        }
+        };
+
+        var rand = new Random();
+        string recommendation = "Упс, щось пішло не так...";
+
+        if (contentType == "anime" && animeRecommendations.ContainsKey(currUserMood))
+        {
+            var list = animeRecommendations[currUserMood];
+            recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        }
+        else if (contentType == "movies" && filmRecommendations.ContainsKey(currUserMood))
+        {
+            var list = filmRecommendations[currUserMood];
+            recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        }
+        else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
+        {
+            var list = photoRecommendations[currUserMood];
+            var photoUrl = list[rand.Next(list.Count)];
+            await bot.SendPhotoAsync(
+                chatId,
+                InputFile.FromUri(photoUrl),
+                caption: "🐱",
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken
+            );
+        }
+        else
+        {
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        }
     }
 }
