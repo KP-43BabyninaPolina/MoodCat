@@ -29,7 +29,7 @@ public static class Keyboard
 
     public static InlineKeyboardMarkup Settings = new InlineKeyboardMarkup(new[]
   {
-                    new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Очищення чату", "СS") },
+                    new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Очищення чату", "CS") },
                     new[] { InlineKeyboardButton.WithCallbackData("Ввімк/Вимк Статистику", "SS") },
                 });
 }

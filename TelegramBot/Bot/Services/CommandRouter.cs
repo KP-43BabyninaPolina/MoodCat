@@ -18,7 +18,8 @@ namespace TelegramBot.Bot.Services
             new MoodStatistHandler(),
              new ClearChatHandler(),
             new OnOffStatisticsHandler(),
-            new RefreshContentHandler()
+            new OnOffHistoryHandler(),
+            new RefreshContentHandler(),
          };
          }
 

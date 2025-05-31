@@ -12,7 +12,7 @@ public static class BotMethod
 {
     public static void SwitchHistory()///
     {
-        throw new NotImplementedException();
+       HistorySwitch.Switch();
     }
 
     public static void SwitchStatistics()
@@ -33,7 +33,7 @@ public static class BotMethod
             {
                 message = message + $"\n{mood.Key}: {mood.Value} ({analysis.MoodRatios[mood.Key]}%)";
             }
-            await bot.SendTextMessageAsync(
+            await bot.SendMessage(
                      chatId,
                      message,
                      cancellationToken: cancellationToken
@@ -41,7 +41,7 @@ public static class BotMethod
         }
         else
         {
-            await bot.SendTextMessageAsync(
+            await bot.SendMessage(
                      chatId,
                      "Nothing happened :(",
                      cancellationToken: cancellationToken
@@ -65,7 +65,7 @@ public static class BotMethod
                 InlineKeyboardButton.WithCallbackData("\U0001F504тип контенту", "R")
             },
             new[] { InlineKeyboardButton.WithCallbackData("До головного меню", "F") },
-           new[] { InlineKeyboardButton.WithCallbackData("Очистити чат", "G") } // <-- нова кнопка
+            new[] { InlineKeyboardButton.WithCallbackData("Очистити чат", "G") } // <-- нова кнопка
         });
 
         await bot.SendTextMessageAsync(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
