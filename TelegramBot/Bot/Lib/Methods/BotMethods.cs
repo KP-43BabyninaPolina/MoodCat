@@ -63,7 +63,7 @@ public static class BotMethod
                 InlineKeyboardButton.WithCallbackData("\U0001F504тип контенту", "HO")
             },
             new[] { InlineKeyboardButton.WithCallbackData("До головного меню", "F") },
-            new[] { InlineKeyboardButton.WithCallbackData("Закрити сесію", "G") }
+           new[] { InlineKeyboardButton.WithCallbackData("Очистити чат", "G") } // <-- нова кнопка
         });
 
         await bot.SendTextMessageAsync(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
@@ -110,5 +110,15 @@ public static class BotMethod
         };
 
         await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
+    }
+
+    internal static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, Dictionary<long, string> userMoods, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void ViewStatistics(long tgId, object context, ITelegramBotClient bot, long chatId, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
