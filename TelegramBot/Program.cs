@@ -80,19 +80,18 @@ namespace TelegramBot
                     var user = message.From;
 
                     UserService service = new(context);
-                      if (StatisticsSwitch.IsOn())
-                    {
-                      await service.RegisterUserAsync(user!.Id, user!.FirstName);
-                    } 
-                    
-                     await BotUtils.SendMessageReplacingOldAsync(
-                       bot,
-                       message.Chat.Id,
-                       "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:",
-                       Keyboard.MainMenu,
-                       userLastMessageIds,
-                       cancellationToken
-                   );
+
+                    await service.RegisterUserAsync(user!.Id, user!.FirstName);
+
+
+                    await BotUtils.SendMessageReplacingOldAsync(
+                      bot,
+                      message.Chat.Id,
+                      "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:",
+                      Keyboard.MainMenu,
+                      userLastMessageIds,
+                      cancellationToken
+                  );
                 }
                 else
                 {
